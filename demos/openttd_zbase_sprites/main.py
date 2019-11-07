@@ -39,16 +39,19 @@ class Direction(Enum):
 #         self.directional_sprite_dict = directional_sprite_dict
 
 class CoalTruck(EngineUnitObject):
-    def __init__(self, position):
+    def __init__(self, position: XY):
         super().__init__()
         self.position = position
-        self.go_to = 6*128, 720-8*64
+        self.go_to = position#6*128, 720-8*64
         self.direction = Direction.EAST
         self.moving_flag = False
         self.moving_direction = Direction.EAST
         self.image = pyglet.resource.image('assets/truck_coal/256_0563.png')
         self.sprite = pyglet.sprite.Sprite(img=self.image)
         self.sprite.x, self.sprite.y = self.position
+    
+    def move_to(self, go_to: XY):
+        self.go_to = go_to
     
     def draw(self):
         self.sprite.draw()
@@ -91,6 +94,11 @@ class GrassTile(TerrainTile):
         super().__init__(pyglet.resource.image('assets/land_grass/256_0001.png'))
 
 
+class RoadTile(TerrainTile):
+    def __init__(self, img_id: int):
+        super().__init__(pyglet.resource.image(f'assets/land_road/256_00{img_id}.png'))
+
+
 class World:
 
     def __init__(self, map_size: XY, map_tiles):
@@ -128,6 +136,12 @@ world = World(
     map_tiles = map_tiles,
 )
 
+road_tiles = [RoadTile(25), RoadTile(25), RoadTile(25), RoadTile(35)]
+road_tiles[0].update_sprite_position(XY(128*2,64*5))
+road_tiles[1].update_sprite_position(XY(128*3,64*4))
+road_tiles[2].update_sprite_position(XY(128*4,64*3))
+road_tiles[3].update_sprite_position(XY(128*5,64*2))
+
 
 window = pyglet.window.Window(resizable=True)
 #window.maximize()
@@ -135,9 +149,28 @@ window.set_location(0, 0)
 window.set_size(1280, 720)
 
 
+coal_truck_01 = CoalTruck(XY(128*1.85, 64*5.85))
+coal_truck_01.move_to(XY(128*5.85, 64*1.85))
+
 moving_units = [
-    CoalTruck((0*128, 720-2*64)),
+    coal_truck_01,
 ]
+
+# goods industry building
+g19 = pyglet.sprite.Sprite(img=pyglet.resource.image('assets/ind_goods/256_0019.png'))
+g17 = pyglet.sprite.Sprite(img=pyglet.resource.image('assets/ind_goods/256_0017.png'))
+g20 = pyglet.sprite.Sprite(img=pyglet.resource.image('assets/ind_goods/256_0020.png'))
+
+gst04 = pyglet.sprite.Sprite(img=pyglet.resource.image('assets/road_station_cargo/256_0004.png'))
+
+g19.x, g19.y = 128*6, 64*5
+g17.x, g17.y = 128*5, 64*4
+g20.x, g20.y = 128*7, 64*4
+
+gst04.x, gst04.y = 128*6, 64*3
+
+ind_goods_01 = [g19, g17, g20, gst04]
+
 
 fps_display = pyglet.window.FPSDisplay(window)
 
@@ -146,6 +179,12 @@ def on_draw():
     window.clear()
 
     for tile in world.get_tiles_for_drawing():
+        tile.draw()
+    
+    for tile in ind_goods_01:
+        tile.draw()
+
+    for tile in road_tiles:
         tile.draw()
 
     for unit in moving_units:

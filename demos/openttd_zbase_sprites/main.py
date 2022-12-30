@@ -3,7 +3,7 @@ from collections import namedtuple
 import itertools
 
 import pyglet
-
+from pyglet.window import mouse
 
 
 XY = namedtuple('XY',['x','y'])
@@ -212,7 +212,15 @@ def update(dt):
         unit.update(dt)
 
 
-
 pyglet.clock.schedule_interval(update, 1/60)
+
+
+
+@window.event
+def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
+    if buttons & mouse.RIGHT:
+        print(f'drag event, mouse right: x:{x}, y:{y}, dx:{dx}, dy:{dy}')
+
+
 
 pyglet.app.run()

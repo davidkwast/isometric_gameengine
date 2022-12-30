@@ -4,28 +4,25 @@ import itertools
 
 import pyglet
 
+
+
 XY = namedtuple('XY',['x','y'])
+
 
 class EngineTerrainObject:
     NEXT_ID = 1
-
+    
     def __init__(self):
-        self.unit_id =  self.NEXT_ID
+        self.unit_id = self.NEXT_ID
         self.NEXT_ID += 1
+
 
 class EngineUnitObject:
     NEXT_ID = 1
-
+    
     def __init__(self):
-        self.unit_id =  self.NEXT_ID
+        self.unit_id = self.NEXT_ID
         self.NEXT_ID += 1
-
-# class GraphicUnit(EngineObject):
-#     def __init__(self, pyglet_batch: pyglet.graphics.Batch):
-#         self.pyglet_batch = pyglet_batch
-
-# class TerrainTile(GraphicUnit):
-#     def __init__(self, )
 
 
 class Direction(Enum):
@@ -34,12 +31,12 @@ class Direction(Enum):
     SOUTH = ( 0,  1)
     WEST  = (-1,  0)
 
-# class DirectionalGraphicUnit:
-#     def __init__(self, directional_sprite_dict):
-#         self.directional_sprite_dict = directional_sprite_dict
 
 class CoalTruck(EngineUnitObject):
+    
+    
     def __init__(self, position: XY):
+        
         super().__init__()
         self.position = position
         self.go_to = position#6*128, 720-8*64
@@ -50,18 +47,21 @@ class CoalTruck(EngineUnitObject):
         self.sprite = pyglet.sprite.Sprite(img=self.image)
         self.sprite.x, self.sprite.y = self.position
     
+    
     def move_to(self, go_to: XY):
         self.go_to = go_to
     
+    
     def draw(self):
         self.sprite.draw()
-
+    
+    
     def update(self, dt):
         pos = self.position
         gt = self.go_to
         
         if pos == gt: return False
-
+        
         s = self.sprite
         s.x += 128 * dt / 2
         s.y += -64 * dt / 2
@@ -72,22 +72,28 @@ class CoalTruck(EngineUnitObject):
             s.y = gt[1]
         
         self.position = s.x, s.y
-
+        
         return True
 
 
 class TerrainTile(EngineTerrainObject):
+    
+    
     def __init__(self, image: pyglet.resource.image):
+        
         super().__init__()
         self.image = image
         self.sprite = pyglet.sprite.Sprite(img=image)
     
+    
     def update_sprite_position(self, position: XY):
+        
         self.sprite.x, self.sprite.y = position
-
-
+    
+    
     def draw(self):
         self.sprite.draw()
+
 
 class GrassTile(TerrainTile):
     def __init__(self):
@@ -100,7 +106,7 @@ class RoadTile(TerrainTile):
 
 
 class World:
-
+    
     def __init__(self, map_size: XY, map_tiles):
         self.map_size = map_size
         self.map_tiles = map_tiles
@@ -124,6 +130,7 @@ class World:
             self.map_tiles[x][y].update_sprite_position(XY(pos_x, pos_y))
 
 
+
 map_tiles = [
     [GrassTile(), GrassTile(), GrassTile(), GrassTile(), GrassTile(), ],
     [GrassTile(), GrassTile(), GrassTile(), GrassTile(), GrassTile(), ],
@@ -131,10 +138,12 @@ map_tiles = [
     [GrassTile(), GrassTile(), GrassTile(), GrassTile(), GrassTile(), ],
 ]
 
+
 world = World(
     map_size = XY(4,3),
     map_tiles = map_tiles,
 )
+
 
 road_tiles = [RoadTile(25), RoadTile(25), RoadTile(25), RoadTile(35)]
 road_tiles[0].update_sprite_position(XY(128*2,64*5))
@@ -156,6 +165,7 @@ moving_units = [
     coal_truck_01,
 ]
 
+
 # goods industry building
 g19 = pyglet.sprite.Sprite(img=pyglet.resource.image('assets/ind_goods/256_0019.png'))
 g17 = pyglet.sprite.Sprite(img=pyglet.resource.image('assets/ind_goods/256_0017.png'))
@@ -172,31 +182,37 @@ gst04.x, gst04.y = 128*6, 64*3
 ind_goods_01 = [g19, g17, g20, gst04]
 
 
+
 fps_display = pyglet.window.FPSDisplay(window)
+
 
 @window.event
 def on_draw():
+    
     window.clear()
-
+    
     for tile in world.get_tiles_for_drawing():
         tile.draw()
     
     for tile in ind_goods_01:
         tile.draw()
-
+    
     for tile in road_tiles:
         tile.draw()
-
+    
     for unit in moving_units:
         unit.draw()
-
+    
     fps_display.draw()
 
-def update(dt):
 
+def update(dt):
+    
     for unit in moving_units:
         unit.update(dt)
 
 
+
 pyglet.clock.schedule_interval(update, 1/60)
+
 pyglet.app.run()

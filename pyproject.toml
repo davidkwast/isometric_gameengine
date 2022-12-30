@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "isometric-gameengine"
+version = "0.1.0"
+description = ""
+authors = ["David Kwast <david.kwast@gmail.com>"]
+license = "GNU GENERAL PUBLIC LICENSE - Version 2"
+readme = "README.md"
+packages = [{include = "isometric_gameengine"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyglet = "^2.0.2.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

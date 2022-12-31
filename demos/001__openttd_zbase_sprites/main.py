@@ -218,9 +218,17 @@ pyglet.clock.schedule_interval(update, 1/60)
 
 @window.event
 def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
+    
     if buttons & mouse.RIGHT:
-        print(f'drag event, mouse right: x:{x}, y:{y}, dx:{dx}, dy:{dy}')
+        # print(f'drag event, mouse right: x:{x}, y:{y}, dx:{dx}, dy:{dy}')
+        
+        coal_truck_01.sprite.x = x
+        coal_truck_01.sprite.y = y
+        # coal_truck_01.sprite.draw()
 
 
+
+window.set_location(0,0)
+window.set_size(1024,600)
 
 pyglet.app.run()
